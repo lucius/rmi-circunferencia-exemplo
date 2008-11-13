@@ -39,5 +39,6 @@ echo "Iniciando a geracao de um 'stub' para 'CircServidor'..."
 $RMIC rmi.CircServidor || exit $ERR_GERACAO
 echo "Stub gerado com sucesso!"
 
+
 popd >/dev/null 2>&1
 
