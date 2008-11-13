@@ -5,19 +5,16 @@ ERR_JDK=1
 ERR_RMI_REG=2
 ERR_JAVA=3
 ERR_CLASSPATH=4
-ERR_IMAGEM=5
 
 
 JDK="/opt/jdk1.6.0_10"
 RMI_REG="$JDK/bin/rmiregistry"
 JAVA="$JDK/bin/java"
 CLASSPATH="`pwd`/bin"
-IMAGEM="`pwd`/imagem.jpg"
 
 
 HOST1="servidor1"
 HOST2="servidor2"
-PORTA="9999"
 
 
 function checa_existencia {
@@ -49,11 +46,9 @@ checa_existencia $CLASSPATH $ERR_CLASSPATH
 
 echo "Inicializando, em background, o 'rmiregistry'"
 pushd $CLASSPATH >/dev/null 2>&1
-$RMI_REG
-$RMI_REG_PID=$!
+$RMI_REG >/dev/null 2>&1 &
+RMI_REG_PID=$!
 trap limpa_rmi SIGINT
-
-
 sleep 1
 
 
@@ -62,19 +57,12 @@ java \
 -Djava.rmi.server.codebase=http://www2.dc.uel.br/~rpherrera/trabalhos_so/ \
 -Djava.security.policy=../java.policy rmi.CircServidor $HOST1 &
 sleep 1
+
+
 java \
 -Djava.rmi.server.codebase=http://www2.dc.uel.br/~rpherrera/trabalhos_so/ \
 -Djava.security.policy=../java.policy rmi.CircServidor $HOST2 &
 sleep 1
-echo ""
-
-
-# TODO Separar em um script cliente
-echo "Iniciando a comunicacao com o 'Servidor'"
-java \
--Djava.rmi.server.codebase=http://www2.dc.uel.br/~rpherrera/trabalhos_so/  \
--Djava.security.policy=../java.policy \
-rmi.CircCliente $HOST1 $HOST2 $IMAGEM
 
 
 if [ ! $? ]
@@ -84,5 +72,4 @@ fi
 
 
 popd >/dev/null 2>&1
-
 
