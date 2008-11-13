@@ -50,13 +50,13 @@ sleep 1
 
 
 echo "Registrando 2 servidores como '$HOST1' e '$HOST2'"
-java \
+$JAVA \
 -Djava.rmi.server.codebase=http://www2.dc.uel.br/~rpherrera/trabalhos_so/ \
 -Djava.security.policy=../java.policy rmi.CircServidor $HOST1 &
 SERV1_PID=$!
 
 
-java \
+$JAVA \
 -Djava.rmi.server.codebase=http://www2.dc.uel.br/~rpherrera/trabalhos_so/ \
 -Djava.security.policy=../java.policy rmi.CircServidor $HOST2 &
 SERV2_PID=$!
