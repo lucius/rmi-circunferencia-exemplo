@@ -30,13 +30,10 @@ function checa_existencia {
 
 
 function limpa_rmi {
-    ps -p $RMI_REG_PID >/dev/null 2>&1
-    if [ $? ]
-    then
-        echo "Matando o processo 'rmiregistry' numero $RMI_REG_PID..."
-	kill -s SIGKILL $RMI_REG_PID >/dev/null 2>&1
-    fi
+	echo "Matando os processos 'rmiregistry', '$HOST1' e '$HOST2'"
+	kill -s SIGKILL $RMI_REG_PID $SERV1_PID $SERV2_PID >/dev/null 2>&1 &
 }
+
 
 checa_existencia $JDK	    $ERR_JDK
 checa_existencia $RMI_REG   $ERR_RMI_REG
@@ -44,7 +41,7 @@ checa_existencia $JAVA      $ERR_JAVA
 checa_existencia $CLASSPATH $ERR_CLASSPATH
 
 
-echo "Inicializando, em background, o 'rmiregistry'"
+echo "Inicializando em background o 'rmiregistry'"
 pushd $CLASSPATH >/dev/null 2>&1
 $RMI_REG >/dev/null 2>&1 &
 RMI_REG_PID=$!
@@ -52,23 +49,20 @@ trap limpa_rmi SIGINT
 sleep 1
 
 
-echo "Inicializando 2 'Servidores' como '$HOST1' e '$HOST2'"
+echo "Registrando 2 servidores como '$HOST1' e '$HOST2'"
 java \
 -Djava.rmi.server.codebase=http://www2.dc.uel.br/~rpherrera/trabalhos_so/ \
 -Djava.security.policy=../java.policy rmi.CircServidor $HOST1 &
-sleep 1
+SERV1_PID=$!
 
 
 java \
 -Djava.rmi.server.codebase=http://www2.dc.uel.br/~rpherrera/trabalhos_so/ \
 -Djava.security.policy=../java.policy rmi.CircServidor $HOST2 &
-sleep 1
+SERV2_PID=$!
 
 
-if [ ! $? ]
-then
-    limpa_rmi
-fi
+wait
 
 
 popd >/dev/null 2>&1
