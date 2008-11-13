@@ -11,10 +11,6 @@ RMIC="$JDK/bin/rmic"
 CLASSPATH="`pwd`/bin"
 
 
-HOST="localhost"
-PORTA="9999"
-
-
 function checa_existencia {
     echo -n "Checando a existencia de '$1'..."
     if [ ! -e $1 ];
